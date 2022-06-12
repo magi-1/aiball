@@ -5,6 +5,8 @@ ToDo:
   - [ ] Weigh pros and cons of both simulation backends.
   - [ ] Remarkable2 brain storm session -> research papaer draft.
 
+Modelling:
+  - [Graph Representation Learning](https://www.cs.mcgill.ca/~wlh/grl_book/files/GRL_Book.pdf)
 
 Simulation Options:
   - [Brax](https://arxiv.org/abs/2106.13281)

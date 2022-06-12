@@ -9,3 +9,6 @@ ToDo:
 Simulation Options:
   - [Brax](https://arxiv.org/abs/2106.13281)
   - [Rapier](https://rapier.rs/)
+
+Physics:
+  - [Blog](https://ekiefl.github.io/2020/04/24/pooltool-theory/)

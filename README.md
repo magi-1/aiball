@@ -1,5 +1,5 @@
-# billiards
-billiards gym
+# aiball
+8ball pool gym
 
 ## Pool Rules and Table Dimensions
 

@@ -1,17 +1,17 @@
 # billiards
 billiards gym
 
-ToDo:
-  - [ ] Weigh pros and cons of both simulation backends.
-  - [ ] Remarkable2 brain storm session -> research papaer draft.
+## Pool Rules and Table Dimensions
 
-Modelling:
+- [Table Dimensions](dimensions.com/element/8-foot-billiards-pool-table)
+
+- [Pocket Dimensions](dimensions.com/element/billiards-pool-table-pockets)
+
+## Pool Agent
+
   - [Graph Representation Learning](https://www.cs.mcgill.ca/~wlh/grl_book/files/GRL_Book.pdf)
 
-Simulation Options:
-  - [Easy Rust](https://www.youtube.com/user/mithradates)
-  - [Brax](https://arxiv.org/abs/2106.13281)
-  - [Rapier](https://rapier.rs/)
-
-Physics:
+## Physics
+  - [Equations of Motion](https://ekiefl.github.io/2020/04/24/pooltool-theory/#--case-3-rolling)
+  - [Algorithm](https://ekiefl.github.io/2020/12/20/pooltool-alg/)
   - [Blog](https://ekiefl.github.io/2020/04/24/pooltool-theory/)

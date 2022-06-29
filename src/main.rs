@@ -1,7 +1,7 @@
-use billiards::balls::PoolBalls;
+use aiball::pool_balls;
 
 fn main() {
-    let balls = PoolBalls::new();
+    let balls = pool_balls::rack();
     for b in balls {
         println!("{:?}", b.btype);
     }

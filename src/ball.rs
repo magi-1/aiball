@@ -9,16 +9,6 @@ pub enum BallType {
     CUE
 }
 
-pub struct PoolBalls {
-    balls: Vec<Ball>
-}
-
-impl PoolBalls {
-    pub fn new() -> Vec<Ball> {
-        (1..17).map(|i| Ball::new(i)).collect()
-    }
-}
-
 pub struct Ball {
     pub btype: BallType,
     pub r: Array1<f64>,
@@ -26,20 +16,8 @@ pub struct Ball {
 }
 
 impl Ball {
-
-    pub fn new(n: usize) -> Ball { 
-        assert!(0 < n && n < 17);
-        let btype = match n {
-            1..=7 => BallType::SOLID,
-            8 => BallType::EIGHT,
-            9..=15 => BallType::STRIPED,
-            _ => BallType::CUE
-        };
-        Ball {
-            btype, 
-            r: array![0.0, 0.0], 
-            v: array![0.0, 0.0]
-        }
+    pub fn new(btype: BallType, r: Array1<f64>) -> Ball { 
+        Ball {btype, r, v: array![0.0, 0.0]}
     }
 
     pub fn mag_v(&self) -> f64 {

@@ -7,6 +7,7 @@ pub enum BallType {
     EIGHT,
     STRIPED,
     CUE,
+    UNASSIGNED,
 }
 
 pub struct Ball {
@@ -16,10 +17,10 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn new(btype: BallType, r: Array1<f64>) -> Ball {
+    pub fn new(btype: BallType) -> Ball {
         Ball {
             btype,
-            r,
+            r: array![0.0, 0.0],
             v: array![0.0, 0.0],
         }
     }

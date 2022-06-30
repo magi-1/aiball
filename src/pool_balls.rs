@@ -1,7 +1,7 @@
 use crate::ball::{Ball, BallType};
-use ndarray::{array, Array1};
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+use crate::R;
+use ndarray::array;
+
 
 fn assign_btype(n: usize) -> BallType {
     match n {
@@ -12,21 +12,37 @@ fn assign_btype(n: usize) -> BallType {
     }
 }
 
-fn assign_location(n: usize) -> Array1<f64> {
-    array![0.0, 0.0]
+fn apply_triangle(balls: &mut Vec<Ball>) {
+    let mut index = 0;
+    for row in (1..=5).rev() {
+        let y = R*(1.0+(row as f64)*(3.0 as f64).sqrt());
+        for j in 0..row {
+            let x = R*((row as f64)+(2*j) as f64);
+            balls[index].r = array![x, y];
+            index += 1;
+        }
+    }
+}
+
+fn sort_balls(balls: &mut Vec<Ball>) {
+    // moving 1ball to head of triangle
+    let r_tmp = balls[0].r.clone();
+    balls[0].r = balls[14].r.clone();
+    balls[14].r = r_tmp;
+    balls[0].btype = BallType::STRIPED;
+    balls[14].btype = BallType::SOLID;
+    balls.swap(7, 10);
 }
 
 pub fn rack() -> Vec<Ball> {
-    // Initializing balls and shuffling
-    //let mut numbers: Vec<usize> = (1..17).collect();
-    //numbers.shuffle(&mut thread_rng(););
-
-    let balls = (1..17)
+    let mut balls = (1..17)
         .map(|n| {
             let btype = assign_btype(n);
-            let r = assign_location(n);
-            Ball::new(btype, r)
+            Ball::new(btype)
         })
         .collect();
+    
+    apply_triangle(&mut balls);
+    sort_balls(&mut balls);
     balls
 }

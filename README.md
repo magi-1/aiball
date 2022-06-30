@@ -1,6 +1,11 @@
 # aiball
 8ball pool gym
 
+## Todo
+
+1. Be able to hit the cue ball with a desired force and cue angle.
+2. Add interaction event manager.
+
 ## Pool Rules and Table Dimensions
 
 - [Table Dimensions](dimensions.com/element/8-foot-billiards-pool-table)

@@ -6,19 +6,16 @@ use crate::table;
 enum GameState {}
 
 struct Game {
-    balls: Vec<Balls>,
-    pockets: Vec<Pocket>,
-    cushions: Vec<Cusion>,
-    events: Vec<impl Event>,
+    balls: PoolBalls,
+    table: PoolTable
 }
 
 impl Game {
 
     fn new() -> Game{
         Game {
-            balls: pool_balls::rack();
-            pockets: pool_table::init_pockets();
-            cushions: pool_table::init_cushions();
+            balls: PoolBalls::new();
+            table: PoolTable::new();
         }
     }
 
@@ -26,7 +23,7 @@ impl Game {
 
     fn get_next_event(&self) -> Option<impl Event> {
         let mut next_event: Option<impl Event> = None;
-        for ball in balls {
+        for ball in self.balls.balls {
 
             if !ball.is_pocketed() {
                 
@@ -35,14 +32,21 @@ impl Game {
                     let b_event = StopRolling::new(ball);
                     Event::mut_compare(&mut next_event, b_event);
                     
-                    for pocket in self.pockets {
+                    for pocket in self.table.pockets {
                         let p_event = HitPocket::new(ball, pocket);
                         Event::mut_compare(&mut next_event, p_event);
                     }
 
-                    for cushion in self.cushions {
+                    for cushion in self.table.cushions {
                         let c_event = HitCushion::new(ball, cushion);
                         Event::mut_compare(&mut next_event, c_event);
+                    }
+
+                    for ball in self.balls.balls {
+                        if ball != ball {
+                            let c_event = HitBall::new(ball, cushion);
+                            Event::mut_compare(&mut next_event, c_event);
+                        }
                     }
                 }  
             }

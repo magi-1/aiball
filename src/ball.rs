@@ -1,7 +1,7 @@
 use crate::{DELTA, G, MU};
 use ndarray::{array, Array1};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum BallType {
     SOLID,
     EIGHT,

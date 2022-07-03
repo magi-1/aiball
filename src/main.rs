@@ -1,8 +1,8 @@
-use aiball::pool_balls;
+use aiball::pool_balls::PoolBalls;
 
 fn main() {
-    let balls = pool_balls::rack();
-    for b in balls {
+    let balls = PoolBalls::new();
+    for b in balls.balls {
         println!("{:?}", b.btype);
     }
 }

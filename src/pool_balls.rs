@@ -1,6 +1,33 @@
 use crate::ball::{Ball, BallType};
 use crate::R;
 use ndarray::array;
+use std::iter::Filter;
+use std::slice::IterMut;
+// need to have a pool balls struct with methods to expose various subsets of balls of interest
+
+pub struct PoolBalls {
+    pub balls: Vec<Ball>,
+}
+
+impl PoolBalls {
+    pub fn new() -> Self {
+        PoolBalls { balls: rack() }
+    }
+
+    pub fn cue_ball(&mut self) -> &mut Ball {
+        &mut self.balls[16]
+    }
+
+    pub fn stripes(&mut self) -> impl Iterator<Item = &mut Ball> {
+        self.balls
+            .iter_mut()
+            .filter(|b| b.btype == BallType::STRIPED)
+    }
+
+    pub fn solids(&mut self) -> impl Iterator<Item = &mut Ball> {
+        self.balls.iter_mut().filter(|b| b.btype == BallType::SOLID)
+    }
+}
 
 fn assign_btype(n: usize) -> BallType {
     match n {
@@ -33,7 +60,7 @@ fn sort_balls(balls: &mut Vec<Ball>) {
     balls.swap(7, 10);
 }
 
-pub fn rack() -> Vec<Ball> {
+fn rack() -> Vec<Ball> {
     let mut balls = (1..17)
         .map(|n| {
             let btype = assign_btype(n);

@@ -1,5 +1,8 @@
 pub mod ball;
 pub mod pool_balls;
+pub mod pool_table;
+pub mod events;
+
 
 pub const DELTA: f64 = 0.001; // Friction: kg*cm*s^-2
 pub const MU: f64 = 1.0; // Friction: kg*cm*s^-2

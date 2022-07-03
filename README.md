@@ -8,9 +8,9 @@
 
 ## Pool Rules and Table Dimensions
 
-- [Table Dimensions](dimensions.com/element/8-foot-billiards-pool-table)
+- [Table Dimensions](https://www.dimensions.com/element/8-foot-billiards-pool-table)
 
-- [Pocket Dimensions](dimensions.com/element/billiards-pool-table-pockets)
+- [Pocket Dimensions](https://www.dimensions.com/element/billiards-pool-table-pockets)
 
 ## Pool Agent
 

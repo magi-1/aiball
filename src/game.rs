@@ -1,10 +1,9 @@
+use crate::ball::*;
 use crate::events::*;
 use crate::pool_balls::*;
 use crate::pool_table::*;
-use crate::ball::*;
 
 use std::boxed::Box;
-
 
 // https://dhghomon.github.io/easy_rust/Chapter_54.html
 
@@ -18,8 +17,7 @@ struct Game {
 }
 
 impl Game {
-
-    fn new() -> Game{
+    fn new() -> Game {
         Game {
             balls: PoolBalls::new(),
             table: PoolTable::new(),
@@ -29,18 +27,14 @@ impl Game {
     fn make_move(&mut self) {}
 
     fn get_next_event(&mut self) -> Option<Box<dyn Event>> {
-
         let mut next_event: Option<Box<dyn Event>> = None;
 
         for ball in self.balls.balls.iter_mut() {
-
             if !ball.is_pocketed() {
-                
-                if ball.is_moving(){
-
+                if ball.is_moving() {
                     let b_event = StopRolling::new(ball);
                     //mut_compare(&mut next_event, b_event);
-                    
+
                     for pocket in &self.table.pockets {
                         let p_event = HitPocket::new(ball, pocket);
                         //mut_compare(&mut next_event, p_event);
@@ -52,7 +46,7 @@ impl Game {
                     }
 
                     // add HitBall Event
-                }  
+                }
             }
         }
         next_event
@@ -66,13 +60,13 @@ impl Game {
             }
         }
     }
-    
+
     fn set_game_state(&mut self) {
         /*
-        This doesnt update things about the balls, but it reads the balls and sets game level 
-        descriptors so that users know who is up, what balls are viable, etc. 
+        This doesnt update things about the balls, but it reads the balls and sets game level
+        descriptors so that users know who is up, what balls are viable, etc.
             - current_player
-            - game_state 
+            - game_state
         */
     }
 
@@ -81,6 +75,4 @@ impl Game {
         self.step_sim();
         self.set_game_state();
     }
-
-    
 }

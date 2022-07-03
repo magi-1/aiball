@@ -79,7 +79,6 @@ impl Event for HitPocket<'_> {
     }
 }
 
-
 pub struct HitCushion<'a> {
     pub ball: &'a mut Ball,
     pub cushion: &'a Cushion,
@@ -105,7 +104,6 @@ impl Event for HitCushion<'_> {
         self.time_delta
     }
 }
-
 
 pub struct HitBall<'a> {
     pub ball: &'a mut Ball,

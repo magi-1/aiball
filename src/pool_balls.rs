@@ -14,6 +14,10 @@ impl PoolBalls {
         PoolBalls { balls: rack() }
     }
 
+    pub fn num_balls(&self) -> usize {
+        self.balls.len()
+    }
+
     pub fn cue_ball(&mut self) -> &mut Ball {
         &mut self.balls[16]
     }
@@ -64,7 +68,7 @@ fn rack() -> Vec<Ball> {
     let mut balls = (1..17)
         .map(|n| {
             let btype = assign_btype(n);
-            Ball::new(btype)
+            Ball::new(n, btype)
         })
         .collect();
 

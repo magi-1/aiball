@@ -17,6 +17,7 @@ pub enum BallState {
 }
 
 pub struct Ball {
+    pub id: usize,
     pub btype: BallType,
     pub bstate: BallState,
     pub r: Array1<f64>,
@@ -25,8 +26,9 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn new(btype: BallType) -> Self {
+    pub fn new(id: usize, btype: BallType) -> Self {
         Ball {
+            id,
             btype,
             bstate: BallState::STATIONARY,
             r: array![0.0, 0.0],
@@ -62,11 +64,17 @@ impl Ball {
         self.bstate = BallState::STATIONARY;
     }
 
-    fn is_pocketed(&self) -> bool {
+    pub fn is_pocketed(&self) -> bool {
         self.bstate == BallState::POCKETED
     }
 
-    fn is_moving(&self) -> bool {
+    pub fn is_moving(&self) -> bool {
         self.bstate == BallState::MOVING
+    }
+}
+
+impl PartialEq for Ball {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
     }
 }

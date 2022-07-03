@@ -1,5 +1,6 @@
 pub mod ball;
 pub mod events;
+pub mod game;
 pub mod pool_balls;
 pub mod pool_table;
 

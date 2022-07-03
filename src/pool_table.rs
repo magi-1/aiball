@@ -4,9 +4,9 @@ pub const WIDTH: f64 = 150.0; // cm
 pub const LENGTH: f64 = 980.665; // cm
 
 
-struct PoolTable {
-    pockets: Vec<Pocket>,
-    cushions: Vec<Cushion>,
+pub struct PoolTable {
+    pub pockets: Vec<Pocket>,
+    pub cushions: Vec<Cushion>,
 }
 
 impl PoolTable {

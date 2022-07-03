@@ -1,8 +1,7 @@
-use crate::{G, MU, DELTA};
-use ndarray::{array, Array1};
 use crate::ball::{Ball, BallState};
 use crate::pool_table::{Cushion, Pocket};
-
+use crate::{DELTA, G, MU};
+use ndarray::{array, Array1};
 
 trait Event {
     fn apply(&mut self);
@@ -22,17 +21,19 @@ trait Event {
 
 struct StopRolling<'a> {
     ball: &'a mut Ball,
-    time_delta: f64
+    time_delta: f64,
 }
 
 impl<'a> StopRolling<'a> {
     fn new(ball: &'a mut Ball) -> Self {
-        StopRolling {ball, time_delta: f64::INFINITY}
+        StopRolling {
+            ball,
+            time_delta: f64::INFINITY,
+        }
     }
 }
 
 impl Event for StopRolling<'_> {
-    
     fn apply(&mut self) {
         self.ball.update_state(self.time_delta)
     }
@@ -49,17 +50,20 @@ impl Event for StopRolling<'_> {
 struct HitPocket<'a> {
     ball: &'a mut Ball,
     pocket: &'a Pocket,
-    time_delta: f64
+    time_delta: f64,
 }
 
 impl<'a> HitPocket<'a> {
     fn new(ball: &'a mut Ball, pocket: &'a Pocket) -> Self {
-        HitPocket {ball, pocket, time_delta: f64::INFINITY}
+        HitPocket {
+            ball,
+            pocket,
+            time_delta: f64::INFINITY,
+        }
     }
 }
 
 impl Event for HitPocket<'_> {
-    
     fn apply(&mut self) {
         self.ball.reset();
         self.ball.bstate = BallState::POCKETED;

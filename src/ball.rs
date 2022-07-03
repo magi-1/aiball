@@ -1,4 +1,4 @@
-use crate::{G, MU, DELTA};
+use crate::{DELTA, G, MU};
 use ndarray::{array, Array1};
 
 #[derive(Debug)]
@@ -21,7 +21,7 @@ pub struct Ball {
     pub bstate: BallState,
     pub r: Array1<f64>,
     pub v: Array1<f64>,
-    pub mag_v: f64
+    pub mag_v: f64,
 }
 
 impl Ball {
@@ -31,7 +31,7 @@ impl Ball {
             bstate: BallState::STATIONARY,
             r: array![0.0, 0.0],
             v: array![0.0, 0.0],
-            mag_v: 0.0
+            mag_v: 0.0,
         }
     }
 

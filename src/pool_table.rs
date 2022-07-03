@@ -1,6 +1,5 @@
 use ndarray::{array, Array1};
 
-
 pub struct Cushion {
     pub id: usize,
     pub r1: Array1<f64>,

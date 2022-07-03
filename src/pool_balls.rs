@@ -2,7 +2,6 @@ use crate::ball::{Ball, BallType};
 use crate::R;
 use ndarray::array;
 
-
 fn assign_btype(n: usize) -> BallType {
     match n {
         1..=7 => BallType::SOLID,
@@ -15,9 +14,9 @@ fn assign_btype(n: usize) -> BallType {
 fn apply_triangle(balls: &mut Vec<Ball>) {
     let mut index = 0;
     for row in (1..=5).rev() {
-        let y = R*(1.0+(row as f64)*(3.0 as f64).sqrt());
+        let y = R * (1.0 + (row as f64) * (3.0 as f64).sqrt());
         for j in 0..row {
-            let x = R*((row as f64)+(2*j) as f64);
+            let x = R * ((row as f64) + (2 * j) as f64);
             balls[index].r = array![x, y];
             index += 1;
         }
@@ -41,7 +40,7 @@ pub fn rack() -> Vec<Ball> {
             Ball::new(btype)
         })
         .collect();
-    
+
     apply_triangle(&mut balls);
     sort_balls(&mut balls);
     balls

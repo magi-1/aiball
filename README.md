@@ -20,3 +20,10 @@
   - [Equations of Motion](https://ekiefl.github.io/2020/04/24/pooltool-theory/#--case-3-rolling)
   - [Algorithm](https://ekiefl.github.io/2020/12/20/pooltool-alg/)
   - [Blog](https://ekiefl.github.io/2020/04/24/pooltool-theory/)
+
+
+## Notes
+
+  - Causality cones
+  - Priority queue for how soon something can happen to a given ball. Naturally dont get to that event until it becomes relevant.
+  - Study time distributions D*(num_balls-2)/speed_sound

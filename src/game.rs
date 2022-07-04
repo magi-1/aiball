@@ -70,11 +70,6 @@ impl Game {
         next_event
     }
 
-    // b_event.calculate_time_until();
-    // if b_event.get_time_until() < (*next_event).get_time_until() {
-    //     next_event = Box::new(b_event);
-    // }
-
     fn step_sim(&mut self) {
         loop {
             let mut event = self.get_next_event();

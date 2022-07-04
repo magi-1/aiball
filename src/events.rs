@@ -22,7 +22,7 @@ pub enum EventEnum<'a> {
 }
 
 pub struct NullEvent {
-    pub time_delta: f64,
+    time_delta: f64,
 }
 
 impl<'a> NullEvent {
@@ -44,8 +44,8 @@ impl Event for NullEvent {
 }
 
 pub struct StopRolling<'a> {
-    pub ball: &'a mut Ball,
-    pub time_delta: f64,
+    ball: &'a mut Ball,
+    time_delta: f64,
 }
 
 impl<'a> StopRolling<'a> {
@@ -74,9 +74,9 @@ impl Event for StopRolling<'_> {
 }
 
 pub struct HitPocket<'a> {
-    pub ball: &'a mut Ball,
-    pub pocket: &'a Pocket,
-    pub time_delta: f64,
+    ball: &'a mut Ball,
+    pocket: &'a Pocket,
+    time_delta: f64,
 }
 
 impl<'a> HitPocket<'a> {
@@ -107,9 +107,9 @@ impl Event for HitPocket<'_> {
 }
 
 pub struct HitCushion<'a> {
-    pub ball: &'a mut Ball,
-    pub cushion: &'a Cushion,
-    pub time_delta: f64,
+    ball: &'a mut Ball,
+    cushion: &'a Cushion,
+    time_delta: f64,
 }
 
 impl<'a> HitCushion<'a> {
@@ -135,9 +135,9 @@ impl Event for HitCushion<'_> {
 }
 
 pub struct HitBall<'a> {
-    pub ball: &'a mut Ball,
-    pub other_ball: &'a mut Ball,
-    pub time_delta: f64,
+    ball: &'a mut Ball,
+    other_ball: &'a mut Ball,
+    time_delta: f64,
 }
 
 impl<'a> HitBall<'a> {

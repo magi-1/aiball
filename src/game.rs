@@ -26,37 +26,60 @@ impl Game {
 
     fn make_move(&mut self) {}
 
-    fn get_next_event(&mut self) -> Box<dyn Event> {
-        let mut next_event: Box<dyn Event> = Box::new(NullEvent::new());
+    fn get_next_event<'a, 'b: 'a>(&'b mut self) -> EventEnum<'a> {
+        let mut ij_time = (0, 0, f64::INFINITY);
+        for i in 0..(self.balls.num_balls() - 1) {
+            for j in (i + 1)..self.balls.num_balls() {
+                if i != j {
+                    let (first, second) = self.balls.balls.split_at_mut(j);
+                    let b1 = &mut first[i];
+                    let b2 = &mut second[0];
 
-        for ball in self.balls.balls.iter_mut() {
-            if !ball.is_pocketed() {
-                if ball.is_moving() {
-                    let mut b_event = StopRolling::new(ball);
-                    b_event.calculate_time_until();
-                    if b_event.get_time_until() < (*next_event).get_time_until() {
-                        next_event = Box::new(b_event);
-                    }
-                    for pocket in &self.table.pockets {
-                        let mut p_event = HitPocket::new(ball, pocket);
-                    }
+                    let mut bb_event = HitBall::new(b1, b2);
 
-                    for cushion in &self.table.cushions {
-                        let mut c_event = HitCushion::new(ball, cushion);
+                    if ij_time.2 > bb_event.get_time_until() {
+                        ij_time = (i, j, bb_event.get_time_until())
                     }
-
-                    // add HitBall Event
                 }
             }
         }
+
+        let mut next_event: EventEnum = EventEnum::NullEvent(NullEvent::new());
+        for ball in self.balls.balls.iter_mut() {
+            if !ball.is_pocketed() {
+                if ball.is_moving() {
+                    let mut b_event = EventEnum::StopRolling(StopRolling::new(ball));
+
+                    for pocket in &self.table.pockets {
+                        let mut p_event = EventEnum::HitPocket(HitPocket::new(ball, pocket));
+                    }
+
+                    for cushion in &self.table.cushions {
+                        let mut c_event = EventEnum::HitCushion(HitCushion::new(ball, cushion));
+                    }
+                }
+            }
+        }
+
+        if next_event.get_time_until() > ij_time.2 {
+            let (first, second) = self.balls.balls.split_at_mut(ij_time.1);
+            let b1 = &mut first[ij_time.0];
+            let b2 = &mut second[ij_time.1];
+            next_event = EventEnum::HitBall(HitBall::new(b1, b2));
+        }
         next_event
     }
+
+    // b_event.calculate_time_until();
+    // if b_event.get_time_until() < (*next_event).get_time_until() {
+    //     next_event = Box::new(b_event);
+    // }
 
     fn step_sim(&mut self) {
         loop {
             let mut event = self.get_next_event();
             let time_delta = event.get_time_until();
-            (*event).apply();
+            event.apply();
             for ball in self.balls.balls.iter_mut() {
                 ball.update_state(time_delta);
             }

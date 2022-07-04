@@ -1,28 +1,35 @@
 use crate::ball::{Ball, BallState};
 use crate::pool_table::{Cushion, Pocket};
 use crate::{DELTA, G, MU};
+use ambassador::{delegatable_trait, Delegate};
 use ndarray::{array, Array1};
 
+#[delegatable_trait]
 pub trait Event {
     fn apply(&mut self);
     fn calculate_time_until(&mut self);
     fn get_time_until(&self) -> f64;
 }
 
-// pub fn mut_compare_events(next_event: &mut Box<dyn Event>, other: &mut Box<dyn Event>) {
-//     other.calculate_time_until();
-//     if other.get_time_until() < (*next_event).get_time_until() {
-//         next_event = other;
-//     }
-// }
+#[derive(Delegate)]
+#[delegate(Event)]
+pub enum EventEnum<'a> {
+    StopRolling(StopRolling<'a>),
+    HitBall(HitBall<'a>),
+    HitCushion(HitCushion<'a>),
+    HitPocket(HitPocket<'a>),
+    NullEvent(NullEvent),
+}
 
-pub struct NullEvent{
+pub struct NullEvent {
     pub time_delta: f64,
 }
 
 impl<'a> NullEvent {
     pub fn new() -> Self {
-        NullEvent { time_delta: f64::INFINITY }
+        NullEvent {
+            time_delta: f64::INFINITY,
+        }
     }
 }
 
@@ -43,10 +50,12 @@ pub struct StopRolling<'a> {
 
 impl<'a> StopRolling<'a> {
     pub fn new(ball: &'a mut Ball) -> Self {
-        StopRolling {
+        let mut event = StopRolling {
             ball,
             time_delta: f64::INFINITY,
-        }
+        };
+        event.calculate_time_until();
+        event
     }
 }
 
@@ -72,11 +81,13 @@ pub struct HitPocket<'a> {
 
 impl<'a> HitPocket<'a> {
     pub fn new(ball: &'a mut Ball, pocket: &'a Pocket) -> Self {
-        HitPocket {
+        let mut event = HitPocket {
             ball,
             pocket,
             time_delta: f64::INFINITY,
-        }
+        };
+        event.calculate_time_until();
+        event
     }
 }
 
@@ -95,7 +106,6 @@ impl Event for HitPocket<'_> {
     }
 }
 
-
 pub struct HitCushion<'a> {
     pub ball: &'a mut Ball,
     pub cushion: &'a Cushion,
@@ -104,11 +114,13 @@ pub struct HitCushion<'a> {
 
 impl<'a> HitCushion<'a> {
     pub fn new(ball: &'a mut Ball, cushion: &'a Cushion) -> Self {
-        HitCushion {
+        let mut event = HitCushion {
             ball,
             cushion,
             time_delta: f64::INFINITY,
-        }
+        };
+        event.calculate_time_until();
+        event
     }
 }
 
@@ -122,20 +134,21 @@ impl Event for HitCushion<'_> {
     }
 }
 
-
 pub struct HitBall<'a> {
     pub ball: &'a mut Ball,
-    pub other_ball: &'a Ball,
+    pub other_ball: &'a mut Ball,
     pub time_delta: f64,
 }
 
 impl<'a> HitBall<'a> {
-    pub fn new(ball: &'a mut Ball, other_ball: &'a Ball) -> Self {
-        HitBall {
+    pub fn new(ball: &'a mut Ball, other_ball: &'a mut Ball) -> Self {
+        let mut event = HitBall {
             ball,
             other_ball,
             time_delta: f64::INFINITY,
-        }
+        };
+        event.calculate_time_until();
+        event
     }
 }
 

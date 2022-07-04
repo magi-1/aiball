@@ -9,16 +9,32 @@ pub trait Event {
     fn get_time_until(&self) -> f64;
 }
 
-// pub fn mut_compare(next_event: &mut Option<Box<dyn Event>>, mut other: Box<dyn Event>) {
+// pub fn mut_compare_events(next_event: &mut Box<dyn Event>, other: &mut Box<dyn Event>) {
 //     other.calculate_time_until();
-//     if let Some(e) = next_event {
-//         if other.get_time_until() < e.get_time_until() {
-//             *next_event = Some(other);
-//         }
-//     } else {
-//         *next_event = Some(other);
+//     if other.get_time_until() < (*next_event).get_time_until() {
+//         next_event = other;
 //     }
 // }
+
+pub struct NullEvent{
+    pub time_delta: f64,
+}
+
+impl<'a> NullEvent {
+    pub fn new() -> Self {
+        NullEvent { time_delta: f64::INFINITY }
+    }
+}
+
+impl Event for NullEvent {
+    fn apply(&mut self) {}
+
+    fn calculate_time_until(&mut self) {}
+
+    fn get_time_until(&self) -> f64 {
+        self.time_delta
+    }
+}
 
 pub struct StopRolling<'a> {
     pub ball: &'a mut Ball,
@@ -79,6 +95,7 @@ impl Event for HitPocket<'_> {
     }
 }
 
+
 pub struct HitCushion<'a> {
     pub ball: &'a mut Ball,
     pub cushion: &'a Cushion,
@@ -104,6 +121,7 @@ impl Event for HitCushion<'_> {
         self.time_delta
     }
 }
+
 
 pub struct HitBall<'a> {
     pub ball: &'a mut Ball,

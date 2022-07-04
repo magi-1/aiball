@@ -26,23 +26,23 @@ impl Game {
 
     fn make_move(&mut self) {}
 
-    fn get_next_event(&mut self) -> Option<Box<dyn Event>> {
-        let mut next_event: Option<Box<dyn Event>> = None;
+    fn get_next_event(&mut self) -> Box<dyn Event> {
+        let mut next_event: Box<dyn Event> = Box::new(NullEvent::new());
 
         for ball in self.balls.balls.iter_mut() {
             if !ball.is_pocketed() {
                 if ball.is_moving() {
-                    let b_event = StopRolling::new(ball);
-                    //mut_compare(&mut next_event, b_event);
-
+                    let mut b_event = StopRolling::new(ball);
+                    b_event.calculate_time_until();
+                    if b_event.get_time_until() < (*next_event).get_time_until() {
+                        next_event = Box::new(b_event);
+                    }
                     for pocket in &self.table.pockets {
-                        let p_event = HitPocket::new(ball, pocket);
-                        //mut_compare(&mut next_event, p_event);
+                        let mut p_event = HitPocket::new(ball, pocket);
                     }
 
                     for cushion in &self.table.cushions {
-                        let c_event = HitCushion::new(ball, cushion);
-                        //mut_compare(&mut next_event, c_event);
+                        let mut c_event = HitCushion::new(ball, cushion);
                     }
 
                     // add HitBall Event
@@ -53,10 +53,12 @@ impl Game {
     }
 
     fn step_sim(&mut self) {
-        while let Some(mut event) = self.get_next_event() {
+        loop {
+            let mut event = self.get_next_event();
+            let time_delta = event.get_time_until();
             (*event).apply();
-            for ball in &mut self.balls.balls {
-                ball.update_state(event.get_time_until());
+            for ball in self.balls.balls.iter_mut() {
+                ball.update_state(time_delta);
             }
         }
     }

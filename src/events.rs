@@ -4,8 +4,8 @@ use crate::SimObjects;
 
 #[delegatable_trait]
 pub trait Event {
-    fn calculate_time_until(&self, objects: &SimObjects);
     fn get_time_until(&self) -> f64;
+    fn calculate_time_until(&self, objects: &SimObjects);
     fn apply(&self, objects: &mut SimObjects);
 }
 

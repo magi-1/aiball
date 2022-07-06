@@ -44,9 +44,9 @@ impl Event for NullEvent {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, objects: &SimObjects) {}
+    fn calculate_time_until(&self, _objects: &SimObjects) {}
 
-    fn apply(&self, objects: &mut SimObjects) {}
+    fn apply(&self, _objects: &mut SimObjects) {}
 }
 
 pub struct StopRolling {
@@ -57,7 +57,7 @@ pub struct StopRolling {
 impl StopRolling {
     pub fn new(ball_id: usize) -> Self {
         Self {
-            ball_id: ball_id,
+            ball_id,
             time_delta: 0.0,
         }
     }
@@ -68,9 +68,9 @@ impl Event for StopRolling {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, objects: &SimObjects) {}
+    fn calculate_time_until(&self, _objects: &SimObjects) {}
 
-    fn apply(&self, objects: &mut SimObjects) {}
+    fn apply(&self, _objects: &mut SimObjects) {}
 }
 
 pub struct HitPocket {
@@ -94,9 +94,9 @@ impl Event for HitPocket {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, objects: &SimObjects) {}
+    fn calculate_time_until(&self, _objects: &SimObjects) {}
 
-    fn apply(&self, objects: &mut SimObjects) {}
+    fn apply(&self, _objects: &mut SimObjects) {}
 }
 
 pub struct HitCushion {
@@ -120,9 +120,9 @@ impl Event for HitCushion {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, objects: &SimObjects) {}
+    fn calculate_time_until(&self, _objects: &SimObjects) {}
 
-    fn apply(&self, objects: &mut SimObjects) {}
+    fn apply(&self, _objects: &mut SimObjects) {}
 }
 
 pub struct HitBall {
@@ -146,7 +146,7 @@ impl Event for HitBall {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, objects: &SimObjects) {}
+    fn calculate_time_until(&self, _objects: &SimObjects) {}
 
-    fn apply(&self, objects: &mut SimObjects) {}
+    fn apply(&self, _objects: &mut SimObjects) {}
 }

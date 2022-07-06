@@ -54,7 +54,10 @@ pub struct StopRolling {
 
 impl StopRolling {
     pub fn new(ball_id: usize) -> Self {
-        Self {ball_id: ball_id, time_delta: 0.0}
+        Self {
+            ball_id: ball_id,
+            time_delta: 0.0,
+        }
     }
 }
 
@@ -76,7 +79,11 @@ pub struct HitPocket {
 
 impl HitPocket {
     pub fn new(ball_id: usize, pocket_id: usize) -> Self {
-        Self {ball_id, pocket_id, time_delta: f64::INFINITY}
+        Self {
+            ball_id,
+            pocket_id,
+            time_delta: f64::INFINITY,
+        }
     }
 }
 
@@ -98,7 +105,11 @@ pub struct HitCushion {
 
 impl HitCushion {
     pub fn new(ball_id: usize, cushion_id: usize) -> Self {
-        Self {ball_id, cushion_id, time_delta: f64::INFINITY}
+        Self {
+            ball_id,
+            cushion_id,
+            time_delta: f64::INFINITY,
+        }
     }
 }
 
@@ -120,7 +131,11 @@ pub struct HitBall {
 
 impl HitBall {
     pub fn new(ball_id: usize, other_ball_id: usize) -> Self {
-        Self {ball_id, other_ball_id, time_delta: f64::INFINITY}
+        Self {
+            ball_id,
+            other_ball_id,
+            time_delta: f64::INFINITY,
+        }
     }
 }
 

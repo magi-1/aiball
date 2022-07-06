@@ -1,13 +1,15 @@
-use crate::SimObjects;
 use crate::events::*;
+use crate::SimObjects;
 
 struct Game {
-    sim_objects: SimObjects
+    sim_objects: SimObjects,
 }
 
 impl Game {
     pub fn new() -> Self {
-        Self {sim_objects: SimObjects::new()}
+        Self {
+            sim_objects: SimObjects::new(),
+        }
     }
     fn make_move(&mut self) {}
 
@@ -24,7 +26,8 @@ impl Game {
             }
 
             for cushion_id in 0..objects.pool_table.num_cushions() {
-                let mut event: EventEnum = EventEnum::HitCushion(HitCushion::new(ball_id, cushion_id));
+                let mut event: EventEnum =
+                    EventEnum::HitCushion(HitCushion::new(ball_id, cushion_id));
                 event.calculate_time_until(objects);
                 mut_compare_events(&mut next_event, event);
             }
@@ -37,11 +40,10 @@ impl Game {
         }
         match next_event {
             EventEnum::NullEvent(_) => None,
-            _ => Some(next_event)
+            _ => Some(next_event),
         }
     }
 
-    
     fn play_turn(&mut self) {
         self.make_move();
         while let Some(event) = self.get_next_event() {
@@ -49,6 +51,4 @@ impl Game {
         }
         self.evaluate_game_state();
     }
-        
 }
-

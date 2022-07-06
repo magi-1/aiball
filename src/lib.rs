@@ -11,7 +11,7 @@ pub const G: f64 = 980.665; // Gravity: cm/s^2
 
 pub struct SimObjects {
     pub pool_balls: pool_balls::PoolBalls,
-    pub pool_table: pool_table::PoolTable
+    pub pool_table: pool_table::PoolTable,
 }
 
 impl SimObjects {

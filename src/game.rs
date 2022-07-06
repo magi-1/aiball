@@ -22,20 +22,18 @@ impl Game {
             for pocket_id in 0..objects.pool_table.num_pockets() {
                 let mut event = EventEnum::HitPocket(HitPocket::new(ball_id, pocket_id));
                 event.calculate_time_until(objects);
-                mut_compare_events(&mut next_event, event);
+                next_event.mut_compare(event);
             }
 
             for cushion_id in 0..objects.pool_table.num_cushions() {
                 let mut event = EventEnum::HitCushion(HitCushion::new(ball_id, cushion_id));
                 event.calculate_time_until(objects);
-                mut_compare_events(&mut next_event, event);
-            }
+                next_event.mut_compare(event);            }
 
             for other_ball_id in 0..objects.pool_balls.num_balls() {
                 let mut event = EventEnum::HitBall(HitBall::new(ball_id, other_ball_id));
                 event.calculate_time_until(objects);
-                mut_compare_events(&mut next_event, event);
-            }
+                next_event.mut_compare(event);            }
         }
         match next_event {
             EventEnum::NullEvent(_) => None,

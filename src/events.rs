@@ -19,9 +19,11 @@ pub enum EventEnum {
     NullEvent(NullEvent),
 }
 
-pub fn mut_compare_events(next_event: &mut EventEnum, event: EventEnum) {
-    if event.get_time_until() < next_event.get_time_until() {
-        *next_event = event;
+impl EventEnum {
+    pub fn mut_compare(&mut self, other: EventEnum) {
+        if other.get_time_until() < self.get_time_until() {
+            *self = other;
+        }
     }
 }
 

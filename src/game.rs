@@ -28,12 +28,14 @@ impl Game {
             for cushion_id in 0..objects.pool_table.num_cushions() {
                 let event = EventEnum::HitCushion(HitCushion::new(ball_id, cushion_id));
                 event.calculate_time_until(objects);
-                next_event.mut_compare(event);            }
+                next_event.mut_compare(event);
+            }
 
             for other_ball_id in 0..objects.pool_balls.num_balls() {
                 let event = EventEnum::HitBall(HitBall::new(ball_id, other_ball_id));
                 event.calculate_time_until(objects);
-                next_event.mut_compare(event);            }
+                next_event.mut_compare(event);
+            }
         }
         match next_event {
             EventEnum::NullEvent(_) => None,

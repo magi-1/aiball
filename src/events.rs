@@ -20,7 +20,9 @@ pub enum EventEnum {
 }
 
 impl Default for EventEnum {
-    fn default() -> Self { EventEnum::NullEvent(NullEvent::new()) }
+    fn default() -> Self {
+        EventEnum::NullEvent(NullEvent::new())
+    }
 }
 
 impl EventEnum {

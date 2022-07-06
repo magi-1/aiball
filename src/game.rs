@@ -17,7 +17,7 @@ impl Game {
 
     pub fn get_next_event(&self) -> Option<EventEnum> {
         let objects = &self.sim_objects;
-        let mut next_event = EventEnum::NullEvent(NullEvent::new());
+        let mut next_event = EventEnum::default();
         for ball_id in 0..objects.pool_balls.num_balls() {
             for pocket_id in 0..objects.pool_table.num_pockets() {
                 let event = EventEnum::HitPocket(HitPocket::new(ball_id, pocket_id));

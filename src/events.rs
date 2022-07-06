@@ -19,6 +19,10 @@ pub enum EventEnum {
     NullEvent(NullEvent),
 }
 
+impl Default for EventEnum {
+    fn default() -> Self { EventEnum::NullEvent(NullEvent::new()) }
+}
+
 impl EventEnum {
     pub fn mut_compare(&mut self, other: EventEnum) {
         if other.get_time_until() < self.get_time_until() {

@@ -1,8 +1,6 @@
 use crate::ball::{Ball, BallType};
 use crate::R;
 use ndarray::array;
-use std::iter::Filter;
-use std::slice::IterMut;
 // need to have a pool balls struct with methods to expose various subsets of balls of interest
 
 pub struct PoolBalls {
@@ -18,19 +16,30 @@ impl PoolBalls {
         self.balls.len()
     }
 
+    pub fn get_ball(&self, ball_id: usize) -> &Ball {
+        &self.balls[ball_id]
+    }
+
+    pub fn get_mut_ball(&mut self, ball_id: usize) -> &mut Ball {
+        &mut self.balls[ball_id]
+    }
+
     pub fn cue_ball(&mut self) -> &mut Ball {
         &mut self.balls[16]
     }
+}
 
-    pub fn stripes(&mut self) -> impl Iterator<Item = &mut Ball> {
-        self.balls
-            .iter_mut()
-            .filter(|b| b.btype == BallType::STRIPED)
-    }
+fn rack() -> Vec<Ball> {
+    let mut balls = (1..17)
+        .map(|n| {
+            let btype = assign_btype(n);
+            Ball::new(n, btype)
+        })
+        .collect();
 
-    pub fn solids(&mut self) -> impl Iterator<Item = &mut Ball> {
-        self.balls.iter_mut().filter(|b| b.btype == BallType::SOLID)
-    }
+    apply_triangle(&mut balls);
+    sort_balls(&mut balls);
+    balls
 }
 
 fn assign_btype(n: usize) -> BallType {
@@ -62,17 +71,4 @@ fn sort_balls(balls: &mut Vec<Ball>) {
     balls[0].btype = BallType::STRIPED;
     balls[14].btype = BallType::SOLID;
     balls.swap(7, 10);
-}
-
-fn rack() -> Vec<Ball> {
-    let mut balls = (1..17)
-        .map(|n| {
-            let btype = assign_btype(n);
-            Ball::new(n, btype)
-        })
-        .collect();
-
-    apply_triangle(&mut balls);
-    sort_balls(&mut balls);
-    balls
 }

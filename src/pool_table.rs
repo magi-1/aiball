@@ -1,4 +1,4 @@
-use ndarray::{array, Array1, Array2};
+use ndarray::{array, Array1};
 
 pub const WIDTH: f64 = 150.0; // cm
 pub const LENGTH: f64 = 980.665; // cm
@@ -14,6 +14,18 @@ impl PoolTable {
             pockets: init_pockets(),
             cushions: init_cushions(),
         }
+    }
+
+    pub fn get_pocket(&self, pocket_id: usize) -> &Pocket {
+        &self.pockets[pocket_id]
+    }
+
+    pub fn num_pockets(&self) -> usize {
+        self.pockets.len()
+    }
+
+    pub fn num_cushions(&self) -> usize {
+        self.cushions.len()
     }
 }
 

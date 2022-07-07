@@ -159,8 +159,8 @@ impl Event for HitBall {
     }
 
     fn calculate_time_until(&mut self, objects: &SimObjects) {
-        let b1: &Ball = &objects.balls[self.ball_id];
-        let b2: &Ball = &objects.balls[self.other_ball_id];
+        let b1: &Ball = &objects.get_ball(self.ball_id);
+        let b2: &Ball = &objects.get_ball(self.other_ball_id);
         let c: Array2<f64> = &b1.r_coeffs - &b2.r_coeffs;
 
         let a4: f64 = c[[0, 2]].powi(2) + c[[1, 2]].powi(2);

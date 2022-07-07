@@ -10,15 +10,50 @@ pub const R: f64 = 2.8575; // Ball Radius: cm
 pub const G: f64 = 980.665; // Gravity: cm/s^2
 
 pub struct SimObjects {
-    pub pool_balls: pool_balls::PoolBalls,
-    pub pool_table: pool_table::PoolTable,
+    pub balls: Vec<ball::Ball>,
+    pub pockets: Vec<pool_table::Pocket>,
+    pub cushions: Vec<pool_table::Cushion>,
 }
 
 impl SimObjects {
     pub fn new() -> Self {
+
+        let balls: Vec<ball::Ball> = pool_balls::rack();
+        let pockets: Vec<pool_table::Pocket> =  pool_table::init_pockets();
+        let cushions: Vec<pool_table::Cushion> = pool_table::init_cushions();
         Self {
-            pool_balls: pool_balls::PoolBalls::new(),
-            pool_table: pool_table::PoolTable::new(),
+            balls,
+            pockets,
+            cushions
         }
     }
+
+    pub fn num_balls(&self) -> usize {
+        self.balls.len()
+    }
+
+    pub fn get_ball(&self, ball_id: usize) -> &ball::Ball {
+        &self.balls[ball_id]
+    }
+
+    pub fn get_mut_ball(&mut self, ball_id: usize) -> &mut ball::Ball {
+        &mut self.balls[ball_id]
+    }
+
+    pub fn cue_ball(&mut self) -> &mut ball::Ball {
+        &mut self.balls[16]
+    }
+
+    pub fn get_pocket(&self, pocket_id: usize) -> &pool_table::Pocket {
+        &self.pockets[pocket_id]
+    }
+
+    pub fn num_pockets(&self) -> usize {
+        self.pockets.len()
+    }
+
+    pub fn num_cushions(&self) -> usize {
+        self.cushions.len()
+    }
+
 }

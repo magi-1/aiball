@@ -1,11 +1,15 @@
 use ambassador::{delegatable_trait, Delegate};
+use ndarray::{Array1, Array2};
+use roots::{Roots, find_roots_quartic};
 
-use crate::SimObjects;
+use crate::{SimObjects, R};
+use crate::ball::Ball;
+
 
 #[delegatable_trait]
 pub trait Event {
     fn get_time_until(&self) -> f64;
-    fn calculate_time_until(&self, objects: &SimObjects);
+    fn calculate_time_until(&mut self, objects: &SimObjects);
     fn apply(&self, objects: &mut SimObjects);
 }
 
@@ -50,7 +54,7 @@ impl Event for NullEvent {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, _objects: &SimObjects) {}
+    fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
     fn apply(&self, _objects: &mut SimObjects) {}
 }
@@ -74,7 +78,7 @@ impl Event for StopRolling {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, _objects: &SimObjects) {}
+    fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
     fn apply(&self, _objects: &mut SimObjects) {}
 }
@@ -100,7 +104,7 @@ impl Event for HitPocket {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, _objects: &SimObjects) {}
+    fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
     fn apply(&self, _objects: &mut SimObjects) {}
 }
@@ -126,7 +130,7 @@ impl Event for HitCushion {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, _objects: &SimObjects) {}
+    fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
     fn apply(&self, _objects: &mut SimObjects) {}
 }
@@ -152,7 +156,35 @@ impl Event for HitBall {
         self.time_delta
     }
 
-    fn calculate_time_until(&self, _objects: &SimObjects) {}
+    fn calculate_time_until(&mut self, objects: &SimObjects) {
+        let b1: &Ball = &objects.balls[self.ball_id];
+        let b2: &Ball = &objects.balls[self.other_ball_id];
+        let c: Array2<f64> = &b1.r_coeffs-&b2.r_coeffs;
+        
+        let a4: f64 = c[[0,2]].powi(2)+c[[1,2]].powi(2);
+        let a3: f64 = 2.0*(c[[0,2]]*c[[0,1]]+c[[1,2]]*c[[1,1]]);
+        let a2: f64 = c[[0,1]].powi(2)+c[[1,1]].powi(2) + 2.0*(c[[0,2]]*c[[0,0]]+c[[1,2]]*c[[1,0]]); 
+        let a1: f64 = 2.0*(c[[0,1]]*c[[0,0]] + c[[1,1]]*c[[1,0]]);
+        let a0: f64 = c[[0,0]].powi(2)+c[[1,0]].powi(2) - 4.0*R.powi(2);
+        let roots: Roots<f64> = find_roots_quartic(a4, a3, a2, a1, a0);
+        
+        let min_root: Option<f64> = match roots {
+            Roots::One(values) => smallest_positive_root(&values),
+            Roots::Two(values) => smallest_positive_root(&values),
+            Roots::Three(values) => smallest_positive_root(&values),
+            Roots::Four(values) => smallest_positive_root(&values),
+            _ => None
+        };
+
+        if let Some(time_delta) = min_root {
+            self.time_delta = time_delta;
+        }
+
+    }
 
     fn apply(&self, _objects: &mut SimObjects) {}
+}
+
+pub fn smallest_positive_root(roots: &[f64]) -> Option<f64> {
+    roots.iter().copied().min_by(|x, y| x.total_cmp(y))
 }

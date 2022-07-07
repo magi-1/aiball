@@ -1,35 +1,9 @@
 use crate::ball::{Ball, BallType};
 use crate::R;
 use ndarray::array;
-// need to have a pool balls struct with methods to expose various subsets of balls of interest
 
-pub struct PoolBalls {
-    pub balls: Vec<Ball>,
-}
 
-impl PoolBalls {
-    pub fn new() -> Self {
-        PoolBalls { balls: rack() }
-    }
-
-    pub fn num_balls(&self) -> usize {
-        self.balls.len()
-    }
-
-    pub fn get_ball(&self, ball_id: usize) -> &Ball {
-        &self.balls[ball_id]
-    }
-
-    pub fn get_mut_ball(&mut self, ball_id: usize) -> &mut Ball {
-        &mut self.balls[ball_id]
-    }
-
-    pub fn cue_ball(&mut self) -> &mut Ball {
-        &mut self.balls[16]
-    }
-}
-
-fn rack() -> Vec<Ball> {
+pub fn rack() -> Vec<Ball> {
     let mut balls = (1..17)
         .map(|n| {
             let btype = assign_btype(n);

@@ -18,21 +18,21 @@ impl Game {
     pub fn get_next_event(&self) -> Option<EventEnum> {
         let objects = &self.sim_objects;
         let mut next_event = EventEnum::default();
-        for ball_id in 0..objects.pool_balls.num_balls() {
-            for pocket_id in 0..objects.pool_table.num_pockets() {
-                let event = EventEnum::HitPocket(HitPocket::new(ball_id, pocket_id));
+        for ball_id in 0..objects.num_balls() {
+            for pocket_id in 0..objects.num_pockets() {
+                let mut event = EventEnum::HitPocket(HitPocket::new(ball_id, pocket_id));
                 event.calculate_time_until(objects);
                 next_event.mut_compare(event);
             }
 
-            for cushion_id in 0..objects.pool_table.num_cushions() {
-                let event = EventEnum::HitCushion(HitCushion::new(ball_id, cushion_id));
+            for cushion_id in 0..objects.num_cushions() {
+                let mut event = EventEnum::HitCushion(HitCushion::new(ball_id, cushion_id));
                 event.calculate_time_until(objects);
                 next_event.mut_compare(event);
             }
 
-            for other_ball_id in 0..objects.pool_balls.num_balls() {
-                let event = EventEnum::HitBall(HitBall::new(ball_id, other_ball_id));
+            for other_ball_id in 0..objects.num_balls() {
+                let mut event = EventEnum::HitBall(HitBall::new(ball_id, other_ball_id));
                 event.calculate_time_until(objects);
                 next_event.mut_compare(event);
             }

@@ -46,7 +46,7 @@ impl Game {
     fn play_turn(&mut self) {
         self.make_move();
         while let Some(event) = self.get_next_event() {
-            event.apply(&mut self.sim_objects);
+            self.sim_objects.apply_event(event);
         }
         self.evaluate_game_state();
     }

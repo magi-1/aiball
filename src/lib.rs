@@ -1,3 +1,5 @@
+use events::{EventEnum, Event};
+
 pub mod ball;
 pub mod events;
 pub mod game;
@@ -54,4 +56,13 @@ impl SimObjects {
     pub fn num_cushions(&self) -> usize {
         self.cushions.len()
     }
+
+    pub fn apply_event(&mut self, event: EventEnum) {
+        let time_delta: f64 = event.get_time_until();
+        for ball in &mut self.balls {
+            ball.update_state(time_delta);
+        }
+        event.apply(&mut self.balls);
+    }
+
 }

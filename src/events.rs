@@ -9,7 +9,7 @@ use crate::{SimObjects, G, MU, R};
 pub trait Event {
     fn get_time_until(&self) -> f64;
     fn calculate_time_until(&mut self, objects: &SimObjects);
-    fn apply(&self, objects: &mut SimObjects);
+    fn apply(&self, balls: &mut Vec<Ball>);
 }
 
 #[derive(Delegate)]
@@ -55,7 +55,7 @@ impl Event for NullEvent {
 
     fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
-    fn apply(&self, _objects: &mut SimObjects) {}
+    fn apply(&self, balls: &mut Vec<Ball>) {}
 }
 
 pub struct StopRolling {
@@ -82,7 +82,7 @@ impl Event for StopRolling {
         self.time_delta = ball.mag_v / (MU * G);
     }
 
-    fn apply(&self, _objects: &mut SimObjects) {}
+    fn apply(&self, balls: &mut Vec<Ball>) {}
 }
 
 pub struct HitPocket {
@@ -108,7 +108,7 @@ impl Event for HitPocket {
 
     fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
-    fn apply(&self, _objects: &mut SimObjects) {}
+    fn apply(&self, balls: &mut Vec<Ball>) {}
 }
 
 pub struct HitCushion {
@@ -134,7 +134,7 @@ impl Event for HitCushion {
 
     fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
-    fn apply(&self, _objects: &mut SimObjects) {}
+    fn apply(&self, balls: &mut Vec<Ball>) {}
 }
 
 pub struct HitBall {
@@ -185,7 +185,7 @@ impl Event for HitBall {
         }
     }
 
-    fn apply(&self, _objects: &mut SimObjects) {}
+    fn apply(&self, balls: &mut Vec<Ball>) {}
 }
 
 pub fn smallest_positive_root(roots: &[f64]) -> Option<f64> {

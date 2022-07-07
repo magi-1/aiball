@@ -2,7 +2,7 @@ use ambassador::{delegatable_trait, Delegate};
 use ndarray::{Array1, Array2};
 use roots::{Roots, find_roots_quartic};
 
-use crate::{SimObjects, R};
+use crate::{SimObjects, R, MU, G};
 use crate::ball::Ball;
 
 
@@ -78,7 +78,10 @@ impl Event for StopRolling {
         self.time_delta
     }
 
-    fn calculate_time_until(&mut self, _objects: &SimObjects) {}
+    fn calculate_time_until(&mut self, objects: &SimObjects) {
+        let ball: &Ball = &objects.balls[self.ball_id]; 
+        self.time_delta = ball.mag_v/(MU*G);
+    }
 
     fn apply(&self, _objects: &mut SimObjects) {}
 }

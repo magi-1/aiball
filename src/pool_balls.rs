@@ -2,7 +2,6 @@ use crate::ball::{Ball, BallType};
 use crate::R;
 use ndarray::array;
 
-
 pub fn rack() -> Vec<Ball> {
     let mut balls = (1..17)
         .map(|n| {

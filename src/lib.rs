@@ -17,14 +17,13 @@ pub struct SimObjects {
 
 impl SimObjects {
     pub fn new() -> Self {
-
         let balls: Vec<ball::Ball> = pool_balls::rack();
-        let pockets: Vec<pool_table::Pocket> =  pool_table::init_pockets();
+        let pockets: Vec<pool_table::Pocket> = pool_table::init_pockets();
         let cushions: Vec<pool_table::Cushion> = pool_table::init_cushions();
         Self {
             balls,
             pockets,
-            cushions
+            cushions,
         }
     }
 
@@ -55,5 +54,4 @@ impl SimObjects {
     pub fn num_cushions(&self) -> usize {
         self.cushions.len()
     }
-
 }

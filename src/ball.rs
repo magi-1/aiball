@@ -38,9 +38,13 @@ impl Ball {
             v: array![0.0, 0.0],
             phi: 0.0,
             mag_v: 0.0,
-            r_coeffs: Array2::<f64>::zeros((3, 2)),
+            r_coeffs: Array2::<f64>::zeros((2, 3)),
             v_coeffs: Array2::<f64>::zeros((2, 2)),
         }
+    }
+
+    pub fn hit(&mut self, phi: f64, force: f64) {
+        self.v = &self.v + force*array![phi.cos(), phi.sin()];
     }
 
     pub fn update_state(&mut self, time_delta: f64) {
@@ -62,6 +66,8 @@ impl Ball {
         ];
 
         if self.mag_v < DELTA {
+            // need to make sure a ball is truly being set as stationary when that event
+            // flags as true based purely on the physics
             self.bstate = BallState::STATIONARY;
         } else {
             self.bstate = BallState::MOVING;
@@ -73,7 +79,7 @@ impl Ball {
     }
 
     pub fn v_t(&self, t: f64) -> Array1<f64> {
-        self.v_coeffs.dot(&array![1.0, t, t.powi(2)])
+        self.v_coeffs.dot(&array![1.0, t])
     }
 
     pub fn reset(&mut self) {
@@ -81,7 +87,7 @@ impl Ball {
         self.v = array![0.0, 0.0];
         self.phi = 0.0;
         self.mag_v = 0.0;
-        self.r_coeffs = Array2::<f64>::zeros((3, 2));
+        self.r_coeffs = Array2::<f64>::zeros((2, 3));
         self.v_coeffs = Array2::<f64>::zeros((2, 2));
         self.bstate = BallState::STATIONARY;
     }

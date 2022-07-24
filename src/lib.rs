@@ -3,11 +3,12 @@ use events::{Event, EventEnum};
 pub mod ball;
 pub mod events;
 pub mod game;
+pub mod math;
 pub mod pool_balls;
 pub mod pool_table;
 
 pub const DELTA: f64 = 0.001; // Friction: kg*cm*s^-2
-pub const MU: f64 = 1.0; // Friction: kg*cm*s^-2
+pub const MU: f64 = 50.0; // Friction: kg*cm*s^-2
 pub const R: f64 = 2.8575; // Ball Radius: cm
 pub const G: f64 = 980.665; // Gravity: cm/s^2
 pub const PI: f64 = std::f64::consts::PI;
@@ -54,6 +55,10 @@ impl SimObjects {
         &self.cushions[cushion_id]
     }
 
+    pub fn get_mut_cushion(&mut self, cushion_id: usize) -> &mut pool_table::Cushion {
+        &mut self.cushions[cushion_id]
+    }
+
     pub fn num_pockets(&self) -> usize {
         self.pockets.len()
     }
@@ -67,6 +72,6 @@ impl SimObjects {
         for ball in &mut self.balls {
             ball.update_state(time_delta);
         }
-        event.apply(&mut self.balls);
+        event.apply(self);
     }
 }

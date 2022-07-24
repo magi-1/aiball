@@ -3,7 +3,8 @@ use ndarray::{array, Array1, Array2};
 use roots::{find_roots_quadratic, find_roots_quartic, Roots};
 
 use crate::ball::{Ball, BallState};
-use crate::pool_table::{Cushion, Pocket};
+use crate::math::{angle_between, mut_normalize, norm, normalize};
+use crate::pool_table::{Cushion, CushionType, Pocket};
 
 use crate::{SimObjects, G, MU, R};
 
@@ -11,7 +12,7 @@ use crate::{SimObjects, G, MU, R};
 pub trait Event {
     fn get_time_until(&self) -> f64;
     fn calculate_time_until(&mut self, objects: &SimObjects);
-    fn apply(&self, balls: &mut Vec<Ball>);
+    fn apply(&self, objects: &mut SimObjects);
 }
 
 #[derive(Delegate)]
@@ -57,7 +58,7 @@ impl Event for NullEvent {
 
     fn calculate_time_until(&mut self, _objects: &SimObjects) {}
 
-    fn apply(&self, balls: &mut Vec<Ball>) {}
+    fn apply(&self, objects: &mut SimObjects) {}
 }
 
 pub struct StopRolling {
@@ -80,18 +81,16 @@ impl Event for StopRolling {
     }
 
     fn calculate_time_until(&mut self, objects: &SimObjects) {
-        let ball: &Ball = &objects.balls[self.ball_id];
-        if ball.is_moving() {
-            self.time_delta = ball.mag_v / (MU * G);
-        }
+        let ball: &Ball = objects.get_ball(self.ball_id);
+        self.time_delta = ball.mag_v / (MU * G);
     }
 
-    fn apply(&self, balls: &mut Vec<Ball>) {
-        // Dont actually need this if the equations of
-        // motion and the calculated_time_until_are accurate
-        // Good candidate for a test
-        balls[self.ball_id].v = array![0.0, 0.0];
-        balls[self.ball_id].bstate = BallState::STATIONARY;
+    fn apply(&self, objects: &mut SimObjects) {
+        let b: &mut Ball = objects.get_mut_ball(self.ball_id);
+        b.v = array![0.0, 0.0];
+        b.mag_v = 0.0;
+        b.bstate = BallState::STATIONARY;
+        b.set_coeffs();
     }
 }
 
@@ -142,7 +141,11 @@ impl Event for HitPocket {
         }
     }
 
-    fn apply(&self, balls: &mut Vec<Ball>) {}
+    fn apply(&self, objects: &mut SimObjects) {
+        let b: &mut Ball = objects.get_mut_ball(self.ball_id);
+        b.reset();
+        b.bstate = BallState::POCKETED;
+    }
 }
 
 pub struct HitCushion {
@@ -167,41 +170,47 @@ impl Event for HitCushion {
     }
 
     fn calculate_time_until(&mut self, objects: &SimObjects) {
-        let b: &Ball = &objects.get_ball(self.ball_id);
+        let b: &Ball = objects.get_ball(self.ball_id);
 
-        if b.bstate == BallState::MOVING {
-            let cushion: &Cushion = objects.get_cushion(self.cushion_id);
-            let r1: &Array1<f64> = &cushion.r1;
-            let r2: &Array1<f64> = &cushion.r2;
-            let c: &Array2<f64> = &b.r_coeffs;
+        let cushion: &Cushion = objects.get_cushion(self.cushion_id);
+        let r1: &Array1<f64> = &cushion.r1;
+        let r2: &Array1<f64> = &cushion.r2;
+        let c: &Array2<f64> = &b.r_coeffs;
 
-            let lx: f64 = -(r2[1] - r1[1]) / (r2[1] - r1[0]);
-            let ly: f64 = 1.0;
-            let l0: f64 = -lx * r1[0] - r1[1];
+        let lx: f64 = -(r2[1] - r1[1]) / (r2[1] - r1[0]);
+        let ly: f64 = 1.0;
+        let l0: f64 = -lx * r1[0] - r1[1];
 
-            let a2: f64 = lx * c[[0, 2]] + ly * c[[1, 2]];
-            let a1: f64 = lx * c[[0, 1]] + ly * c[[1, 1]];
-            let a0_stem: f64 = l0 + lx * c[[0, 0]] + ly * c[[1, 0]];
-            let a0_norm: f64 = R * (lx.powi(2) + ly.powi(2)).sqrt();
-            let a0_pos: f64 = a0_stem + a0_norm;
-            let a0_neg: f64 = a0_stem - a0_norm;
-            let roots1: Roots<f64> = find_roots_quadratic(a2, a1, a0_pos);
-            let min_root1: Option<f64> = smallest_root(roots1);
-            let roots2: Roots<f64> = find_roots_quadratic(a2, a1, a0_neg);
-            let min_root2: Option<f64> = smallest_root(roots2);
+        let a2: f64 = lx * c[[0, 2]] + ly * c[[1, 2]];
+        let a1: f64 = lx * c[[0, 1]] + ly * c[[1, 1]];
+        let a0_stem: f64 = l0 + lx * c[[0, 0]] + ly * c[[1, 0]];
+        let a0_norm: f64 = R * (lx.powi(2) + ly.powi(2)).sqrt();
+        let a0_pos: f64 = a0_stem + a0_norm;
+        let a0_neg: f64 = a0_stem - a0_norm;
+        let roots1: Roots<f64> = find_roots_quadratic(a2, a1, a0_pos);
+        let min_root1: Option<f64> = smallest_root(roots1);
+        let roots2: Roots<f64> = find_roots_quadratic(a2, a1, a0_neg);
+        let min_root2: Option<f64> = smallest_root(roots2);
 
-            if let Some(time_delta) = min_root1 {
-                self.time_delta = time_delta;
-            }
-            if let Some(other_time_delta) = min_root2 {
-                if other_time_delta < self.time_delta {
-                    self.time_delta = other_time_delta;
-                }
+        if let Some(time_delta) = min_root1 {
+            self.time_delta = time_delta;
+        }
+        if let Some(other_time_delta) = min_root2 {
+            if other_time_delta < self.time_delta {
+                self.time_delta = other_time_delta;
             }
         }
     }
 
-    fn apply(&self, balls: &mut Vec<Ball>) {}
+    fn apply(&self, objects: &mut SimObjects) {
+        let cushion: &Cushion = objects.get_cushion(self.cushion_id);
+        let mut index: usize = 0;
+        if cushion.ctype == CushionType::TOP || cushion.ctype == CushionType::BOTTOM {
+            index = 1;
+        }
+        let b: &mut Ball = objects.get_mut_ball(self.ball_id);
+        b.v[index] = -1.0 * b.v[index];
+    }
 }
 
 pub struct HitBall {
@@ -246,7 +255,39 @@ impl Event for HitBall {
         }
     }
 
-    fn apply(&self, balls: &mut Vec<Ball>) {}
+    fn apply(&self, objects: &mut SimObjects) {
+        let b1: &Ball = objects.get_ball(self.ball_id);
+        let b2: &Ball = objects.get_ball(self.other_ball_id);
+
+        let mut dr: Array1<f64> = &b2.r - &b1.r;
+        mut_normalize(&mut dr);
+        
+        let mut v1_next: Array1<f64> = array![0.0,0.0];
+        let mut v2_next: Array1<f64> = array![0.0,0.0];
+        match b2.bstate {
+            BallState::STATIONARY => {
+                let (v1, v2): (Array1<f64>, Array1<f64>) =
+                    elastic_collision(&dr, &b1.v, &b2.v);
+                v1_next = v1;
+                v2_next = v2;
+            }
+            BallState::MOVING => {
+                let v1_tmp: Array1<f64> = &b1.v - &b2.v;
+                let v2_tmp: Array1<f64> = &b2.v - &b2.v;
+                let (v1, v2): (Array1<f64>, Array1<f64>) =
+                    elastic_collision(&dr, &v1_tmp, &v2_tmp);
+                v1_next = v1 + &b2.v;
+                v2_next = v2 + &b2.v;
+            }
+            _ => {}
+        };
+
+        let b1: &mut Ball = objects.get_mut_ball(self.ball_id);
+        b1.v = v1_next;
+        let b2: &mut Ball = objects.get_mut_ball(self.other_ball_id);
+        b2.v = v2_next;
+        b2.bstate = BallState::MOVING;
+    }
 }
 
 fn smallest_root(roots: Roots<f64>) -> Option<f64> {
@@ -260,4 +301,18 @@ fn smallest_root(roots: Roots<f64>) -> Option<f64> {
         Roots::Four(values) => smallest_positive_value(&values),
         _ => None,
     }
+}
+
+fn elastic_collision(
+    dr: &Array1<f64>,
+    v1: &Array1<f64>,
+    v2: &Array1<f64>,
+) -> (Array1<f64>, Array1<f64>) {
+    let alpha: f64 = angle_between(v1, v2);
+    let v_agg: Array1<f64> = v1 + v2;
+    let v_mag: f64 = norm(&v_agg);
+    (
+        v_mag * alpha.sin() * dr,
+        v_mag * alpha.cos() * (v_agg / v_mag - dr),
+    )
 }

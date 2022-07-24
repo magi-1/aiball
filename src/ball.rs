@@ -1,4 +1,6 @@
 use crate::{DELTA, G, MU};
+use crate::math::{norm};
+
 use ndarray::{array, Array1, Array2};
 
 #[derive(Debug, PartialEq)]
@@ -16,6 +18,7 @@ pub enum BallState {
     POCKETED,
 }
 
+#[derive(Debug)]
 pub struct Ball {
     pub id: usize,
     pub btype: BallType,
@@ -44,13 +47,29 @@ impl Ball {
     }
 
     pub fn hit(&mut self, phi: f64, force: f64) {
-        self.v = &self.v + force*array![phi.cos(), phi.sin()];
+        self.phi = phi;
+        self.bstate = BallState::MOVING;
+        self.v = force * array![phi.cos(), phi.sin()];
+        self.mag_v = norm(&self.v);
+        self.set_coeffs();
     }
 
     pub fn update_state(&mut self, time_delta: f64) {
         self.r = self.r_t(time_delta);
         self.v = self.v_t(time_delta);
-        self.mag_v = (&self.v.dot(&self.v)).sqrt();
+        self.mag_v = norm(&self.v);
+        self.set_coeffs();
+
+        if self.mag_v < DELTA {
+            // need to make sure a ball is truly being set as stationary when that event
+            // flags as true based purely on the physics
+            self.bstate = BallState::STATIONARY;
+        } else {
+            self.bstate = BallState::MOVING;
+        }
+    }
+
+    pub fn set_coeffs(&mut self) {
         let cos_phi: f64 = self.phi.cos();
         let sin_phi: f64 = self.phi.sin();
         let grav_fric: f64 = -G * MU;
@@ -64,14 +83,6 @@ impl Ball {
             [mag_v_cos_phi, grav_fric * cos_phi],
             [mag_v_sin_phi, grav_fric * sin_phi]
         ];
-
-        if self.mag_v < DELTA {
-            // need to make sure a ball is truly being set as stationary when that event
-            // flags as true based purely on the physics
-            self.bstate = BallState::STATIONARY;
-        } else {
-            self.bstate = BallState::MOVING;
-        }
     }
 
     pub fn r_t(&self, t: f64) -> Array1<f64> {
